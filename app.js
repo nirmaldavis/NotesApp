@@ -39,7 +39,10 @@ notesApp.controller("SubCtrl", ['$log', 'ItemServiceSvc', '$location',function($
 }]);
 
 //Creating a factory - functional programming style - return itself defines API contracts
-notesApp.factory("ItemServiceFactory", [function() {
+
+//Creating a function for factory
+
+function ItemServiceFactoryFn() {
 
     var items = [{ id: 1, label: "Item 1"}, { id: 2, label: "Item 2"}];
     
@@ -51,11 +54,17 @@ notesApp.factory("ItemServiceFactory", [function() {
             items.push(item);   
         }
     };
-}]);
+}
+
+//Registering factory function
+notesApp.factory("ItemServiceFactory", [ItemServiceFactoryFn]);
 
 
 //Creating a service - Class/OO style - new will be called by Angular before use - constructr function
-notesApp.service("ItemServiceSvc",[function() {
+
+
+//Creating a service constructor function
+function ItemServiceSvcFn() {
     var items = [{id : 1, label : "Item 1"}, { id : 2, label : "Item 2"}];
     
     this.list = function() {
@@ -65,4 +74,9 @@ notesApp.service("ItemServiceSvc",[function() {
     this.add = function(item) {
         items.push(item);   
     }
-}]);
+}
+
+//Registering the service 
+notesApp.service("ItemServiceSvc",[ItemServiceSvcFn]);
+
+
