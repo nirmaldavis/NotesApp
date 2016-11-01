@@ -21,7 +21,7 @@
             <div ng-controller="SubCtrl as ctrl">
                 <h3>First Tab</h3>
                 <ul>
-                    <li ng-repeat="item in ctrl.list">
+                    <li ng-repeat="item in ctrl.list()">
                         <span ng-bind="item.label"></span>
                     </li>
                 </ul>
@@ -34,7 +34,7 @@
             <div ng-controller="SubCtrl as ctrl">
                 <h3>Second Tab</h3>
                 <ul>
-                    <li ng-repeat="item in ctrl.list">
+                    <li ng-repeat="item in ctrl.list()">
                         <span ng-bind="item.label"></span>
                     </li>
                 </ul>
