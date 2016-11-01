@@ -11,7 +11,7 @@ notesApp.controller("MainCtrl", [function() {
     };
 }]);
 
-notesApp.controller("SubCtrl", ['$log', 'ItemServiceSvc', '$location',function($log, itemServiceFactory, $location){
+notesApp.controller("SubCtrl", ['$log', 'ItemServiceSvc', '$location',function($log, itemService, $location){
     
     console.log("In SubCtrl");
     
@@ -20,13 +20,13 @@ notesApp.controller("SubCtrl", ['$log', 'ItemServiceSvc', '$location',function($
     
     self.list = function() {
 
-        return itemServiceFactory.list();
+        return itemService.list();
     };
     
     
     self.add = function() {
         
-        itemServiceFactory.add({
+        itemService.add({
                 id : self.list().length+1,
                 label : 'Item ' + (self.list().length + 1)
             });
