@@ -11,7 +11,7 @@ notesApp.controller("MainCtrl", [function() {
     };
 }]);
 
-notesApp.controller("SubCtrl", ['$log', 'ItemService', '$location',function($log, ItemService, $location){
+notesApp.controller("SubCtrl", ['$log', 'ItemServiceSvc', '$location',function($log, itemServiceFactory, $location){
     
     console.log("In SubCtrl");
     
@@ -20,13 +20,13 @@ notesApp.controller("SubCtrl", ['$log', 'ItemService', '$location',function($log
     
     self.list = function() {
 
-        return ItemService.list();
+        return itemServiceFactory.list();
     };
     
     
     self.add = function() {
         
-        ItemService.add({
+        itemServiceFactory.add({
                 id : self.list().length+1,
                 label : 'Item ' + (self.list().length + 1)
             });
@@ -38,7 +38,8 @@ notesApp.controller("SubCtrl", ['$log', 'ItemService', '$location',function($log
 
 }]);
 
-notesApp.factory("ItemService", [function() {
+//Creating a factory - functional programming style - return itself defines API contracts
+notesApp.factory("ItemServiceFactory", [function() {
 
     var items = [{ id: 1, label: "Item 1"}, { id: 2, label: "Item 2"}];
     
@@ -50,4 +51,18 @@ notesApp.factory("ItemService", [function() {
             items.push(item);   
         }
     };
+}]);
+
+
+//Creating a service - Class/OO style - new will be called by Angular before use - constructr function
+notesApp.service("ItemServiceSvc",[function() {
+    var items = [{id : 1, label : "Item 1"}, { id : 2, label : "Item 2"}];
+    
+    this.list = function() {
+        return items;
+    }
+    
+    this.add = function(item) {
+        items.push(item);   
+    }
 }]);
