@@ -11,7 +11,7 @@ notesApp.controller("MainCtrl", [function() {
     };
 }]);
 
-notesApp.controller("SubCtrl", ['$log', 'ItemServiceSvc', '$location',function($log, itemService, $location){
+notesApp.controller("SubCtrl", ['$log', 'ItemServicePrvder', '$location',function($log, itemService, $location){
     
     console.log("In SubCtrl");
     
@@ -42,7 +42,7 @@ notesApp.controller("SubCtrl", ['$log', 'ItemServiceSvc', '$location',function($
 
 //Creating a function for factory
 
-function ItemServiceFactoryFn() {
+function itemServiceFactoryFn() {
 
     var items = [{ id: 1, label: "Item 1"}, { id: 2, label: "Item 2"}];
     
@@ -56,8 +56,8 @@ function ItemServiceFactoryFn() {
     };
 }
 
-//Registering factory function
-notesApp.factory("ItemServiceFactory", [ItemServiceFactoryFn]);
+//Registering "factory" function
+notesApp.factory("ItemServiceFactory", [itemServiceFactoryFn]);
 
 
 //Creating a service - Class/OO style - new will be called by Angular before use - constructr function
@@ -76,7 +76,52 @@ function ItemServiceSvcFn() {
     }
 }
 
-//Registering the service 
+//Registering the "service" 
 notesApp.service("ItemServiceSvc",[ItemServiceSvcFn]);
 
 
+//Creating a provider - can be customized in config phase
+
+//Creating a Provider function
+function ItemServiceProviderFn(optionalItems) {
+    var items = optionalItems || [];
+    
+    this.list = function() {
+        return items;
+    }
+    
+    this.add = function(item) {
+        items.push(item);   
+    }
+}
+
+//Registering provider function as provider $get API
+notesApp.provider("ItemServicePrvder", function(){
+    var haveDefaultItems = true;
+    
+    this.disableDefaultItems = function() {
+        haveDefaultItems = false;
+    }
+    
+    this.$get = [ function() 
+                 {
+                     var optItems = [];
+                     if(haveDefaultItems) {
+                        optItems = [{ id : 1, label : "Item 1"}, { id : 2 , label : "Item 2" }];   
+                     }
+                     
+                     return new ItemServiceProviderFn(optItems);
+                 }];
+    
+});
+
+//Config phase customization for "Provider". by convention "---Provider". Can call configuration methods exposed by the provider if needed
+notesApp.config(["ItemServicePrvderProvider", function(ItemServiceProvider) {
+    //Can have different configuration as need
+    var shouldHaveDefaultValues = true;
+    
+    if(!shouldHaveDefaultValues) {
+        ItemServiceProvider.disableDefaultItems();
+    }
+
+}]); 
