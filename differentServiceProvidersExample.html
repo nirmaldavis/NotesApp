@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Wip</title>
+    <script src="angular.js"></script>
+    <script>
+        var app = angular.module("myApp", []);
+        
+        
+        //Constant
+        
+//        app.config(function($provide) {
+//            $provide.constant("movieTitle", "Mission Impossible");
+//        });
+        
+        app.constant('movieTitle', 'Padheyum');
+
+        //Value
+        
+        app.value('author', 'Nirmal Davis V');
+
+        //Service
+        
+        app.service('greetingService', function($log) {
+            $log.info('Greeting Service called');
+
+            this.greet = function(name) {
+                console.log("Greet called");
+                return "Have a great day, " + name;
+            };
+        });
+
+        //Decorator
+        
+        function greetingDecorator($delegate) {
+        
+            var originalGreet =  $delegate.greet;
+            
+            function decoratedGreeeting(name) {
+            
+                console.log(" New decorator Greet called");
+                return "Me Wishing you a " + originalGreet(name);
+            };
+            
+            $delegate.greet = decoratedGreeeting;
+            
+            return $delegate;
+        };
+        
+        app.decorator('greetingService', greetingDecorator);
+        
+        
+        //Factory
+        app.factory('calculator', function() {
+
+            return {
+                add: function(a, b) {
+                    return (a + b);
+                }
+            };
+        });
+
+        //Provider
+        
+        app.provider('movieList', function(){
+        
+            
+            return {
+              
+                //state variable for storing configuration
+                
+                selected : '',
+
+                //configuration API which can be exercised in app config phase
+                select : function(selection) {
+                    selected = selection;
+                }
+                ,
+                $get : function() {
+                    return {
+                        
+                        //Real exposed API for client usage of this provider service.
+                        
+                        list : function() {
+                            if(selected == 'Malayalam')
+                                return "Padheyum";
+                            else
+                                return "Mission impossible";
+                        }
+                    }
+                }
+            };
+        });
+        
+        app.config( function(movieListProvider) {
+            console.log("config called..!!");
+            movieListProvider.select('Malayalam');
+        });
+        
+        app.controller('myController', function(movieTitle, author, greetingService, calculator, movieList) {
+            var self = this;
+            self.movie = movieTitle;
+            self.author = author;
+            self.name = '';
+            self.getGreeting = function() {
+                return greetingService.greet(self.name);
+            };
+
+            self.calculate = function(a, b) {
+                console.log("In side ctrl calculate a : " + a);
+                return calculator.add(parseInt(a), parseInt(b));
+            };
+            
+            self.movielist = movieList.list();
+            
+//            expect(self.author).toEqual("Nirmal Davis V");
+        });
+    </script>
+
+</head>
+
+<body ng-app="myApp">
+
+    <h3>My Wip</h3>
+    <div ng-controller='myController as ctrl'>
+        <div>
+            <span>{{ctrl.author}}</span>
+
+        </div>
+        <div>
+            <span>{{ctrl.movie}}</span>
+        </div>
+        <div>
+            <label>Name </label>
+            <input type="text" ng-model='ctrl.name' />
+            <span> {{ctrl.getGreeting()}}</span>
+        </div>
+
+        <div>
+            <label for="">Param 1</label>
+            <input type="text" ng-model='ctrl.param1' placeholder="Enter a number" />
+            <label for="">Param 2</label>
+            <input type="text" ng-model='ctrl.param2' placeholder="Enter a number" />
+            <button ng-click='ctrl.result = ctrl.calculate(ctrl.param1, ctrl.param2);'>Add</button>
+            <div>
+                <label for="">Result : {{ctrl.result}}</label>
+            </div>
+        </div>
+
+       <div>
+           <label for="">{{ctrl.movielist}}</label>
+       </div>
+    </div>
+
+</body>
+
+</html>
